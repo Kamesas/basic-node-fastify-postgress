@@ -13,7 +13,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
   fastify,
   opts
 ): Promise<void> => {
-  fastify.register(usersRoutes, {prefix: '/api'})
+  fastify.register(usersRoutes, { prefix: "/api" });
 
   // eslint-disable-next-line no-void
   void fastify.register(AutoLoad, {
