@@ -1,6 +1,7 @@
 import AutoLoad, { AutoloadPluginOptions } from "@fastify/autoload";
 import { FastifyPluginAsync, FastifyServerOptions } from "fastify";
 import { join } from "node:path";
+import helmet from "@fastify/helmet";
 import {
   serializerCompiler,
   validatorCompiler,
@@ -17,11 +18,23 @@ const app: FastifyPluginAsync<AppOptions> = async (
   fastify,
   opts
 ): Promise<void> => {
+  // Security headers
+  await fastify.register(helmet, {
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+      },
+    },
+  });
+
+  // Zod validation
   fastify.setValidatorCompiler(validatorCompiler);
   fastify.setSerializerCompiler(serializerCompiler);
 
+  // Routes
   fastify.register(usersRoutes, { prefix: "/api" });
 
+  // Plugins
   // eslint-disable-next-line no-void
   void fastify.register(AutoLoad, {
     dir: join(__dirname, "plugins"),
