@@ -1,17 +1,46 @@
 import { FastifyInstance } from "fastify";
-import { getUsersFromDb, createUserInDb } from "./users.models";
+import { ZodTypeProvider } from "fastify-type-provider-zod";
+import { getUsers, createUser } from "./users.models";
+import {
+  UserSchema,
+  CreateUserResponseSchema,
+  GetUsersResponseSchema,
+} from "./users.shchemas";
 
 export default function usersRoutes(fastify: FastifyInstance) {
-  fastify.get("/users", async (_request, reply) => {
-    const users = await getUsersFromDb();
-    return reply.code(200).send(users);
-  });
+  const f = fastify.withTypeProvider<ZodTypeProvider>();
 
-  fastify.post("/users", async (request, reply) => {
-    const body = request.body;
-    console.log("body:", body);
+  f.get(
+    "/users",
+    {
+      schema: {
+        response: {
+          200: GetUsersResponseSchema,
+        },
+      },
+    },
+    async (_request, reply) => {
+      const users = await getUsers();
+      return reply.code(200).send(users);
+    }
+  );
 
-    const newUser = await createUserInDb(body);
-    return reply.code(200).send(newUser);
-  });
+  f.post(
+    "/users",
+    {
+      schema: {
+        body: UserSchema,
+        response: {
+          200: CreateUserResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const body = request.body;
+      console.log("body:", body);
+
+      const newUser = await createUser(body);
+      return reply.code(200).send(newUser);
+    }
+  );
 }
