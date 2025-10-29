@@ -1,20 +1,25 @@
 import { FastifyInstance } from "fastify";
-
-// Mock async function to simulate database call
-async function getUsersFromDb(): Promise<string[]> {
-  return Promise.resolve(["user1", "user2", "user3"]);
-}
+import { ZodTypeProvider } from "fastify-type-provider-zod";
+import { getUsers, createUser } from "./users.models";
+import { getUsersRouteSchema, createUserRouteSchema } from "./users.shchemas";
 
 export default function usersRoutes(fastify: FastifyInstance) {
-  fastify.get("/users", async (_request, reply) => {
-    const users = getUsersFromDb();
+  const f = fastify.withTypeProvider<ZodTypeProvider>();
+
+  f.get("/users", { schema: getUsersRouteSchema }, async (_request, reply) => {
+    const users = await getUsers();
     return reply.code(200).send(users);
   });
 
-  fastify.post("/users", async (request, reply) => {
-    const body = request.body;
-    console.log("body:", body);
+  f.post(
+    "/users",
+    { schema: createUserRouteSchema },
+    async (request, reply) => {
+      const body = request.body;
+      console.log("body:", body);
 
-    return reply.code(200).send("users");
-  });
+      const newUser = await createUser(body);
+      return reply.code(200).send(newUser);
+    }
+  );
 }
