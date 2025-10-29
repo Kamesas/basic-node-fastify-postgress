@@ -12,7 +12,11 @@
     "build:ts": "tsc",
     "watch:ts": "tsc -w",
     "dev": "npm run build:ts && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:dev:start\"",
-    "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js"
+    "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js",
+    "db:types": "kysely-codegen --dialect postgres --out-file src/_db/dbTypes.ts",
+    "db:migrate:up": "tsx src/_db/migrator.ts up",
+    "db:migrate:down": "tsx src/_db/migrator.ts down",
+    "db:seed": "tsx src/_db/runSeeds.ts"
   },
   "keywords": [],
   "author": "",
@@ -21,14 +25,20 @@
     "@fastify/autoload": "^6.0.0",
     "@fastify/helmet": "^13.0.2",
     "@fastify/sensible": "^6.0.0",
+    "dotenv": "^17.2.3",
     "fastify": "^5.0.0",
     "fastify-cli": "^7.4.0",
     "fastify-plugin": "^5.0.0",
     "fastify-type-provider-zod": "^6.1.0",
+    "kysely": "^0.28.8",
+    "kysely-codegen": "^0.19.0",
+    "pg": "^8.16.3",
+    "tsx": "^4.20.6",
     "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/node": "^22.1.0",
+    "@types/pg": "^8.15.6",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.46.2",
     "c8": "^10.1.2",
