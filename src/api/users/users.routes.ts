@@ -1,13 +1,9 @@
 import { FastifyInstance } from "fastify";
-
-// Mock async function to simulate database call
-async function getUsersFromDb(): Promise<string[]> {
-  return Promise.resolve(["user1", "user2", "user3"]);
-}
+import { getUsersFromDb, createUserInDb } from "./users.models";
 
 export default function usersRoutes(fastify: FastifyInstance) {
   fastify.get("/users", async (_request, reply) => {
-    const users = getUsersFromDb();
+    const users = await getUsersFromDb();
     return reply.code(200).send(users);
   });
 
@@ -15,6 +11,7 @@ export default function usersRoutes(fastify: FastifyInstance) {
     const body = request.body;
     console.log("body:", body);
 
-    return reply.code(200).send("users");
+    const newUser = await createUserInDb(body);
+    return reply.code(200).send(newUser);
   });
 }
