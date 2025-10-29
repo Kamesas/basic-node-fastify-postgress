@@ -12,5 +12,19 @@ export const CreateUserResponseSchema = z.object({
 
 export const GetUsersResponseSchema = z.array(z.string());
 
-// Type exports
+// Route Schemas
+export const getUsersRouteSchema = {
+  response: {
+    200: GetUsersResponseSchema,
+  },
+};
+
+export const createUserRouteSchema = {
+  body: UserSchema,
+  response: {
+    200: CreateUserResponseSchema,
+  },
+};
+
+// Types
 export type User = z.infer<typeof UserSchema>;
