@@ -24,6 +24,19 @@ export default [
       // 🎨 Override neostandard stylistic rules to match Prettier settings
       "@stylistic/quotes": ["error", "double", { avoidEscape: true }],
       "@stylistic/semi": ["error", "always"],
+      "@stylistic/comma-dangle": [
+        "error",
+        {
+          arrays: "always-multiline",
+          objects: "always-multiline",
+          imports: "always-multiline",
+          exports: "always-multiline",
+          functions: "never",
+          enums: "always-multiline",
+          generics: "always-multiline",
+          tuples: "always-multiline",
+        },
+      ],
       "@stylistic/space-before-function-paren": [
         "error",
         {
