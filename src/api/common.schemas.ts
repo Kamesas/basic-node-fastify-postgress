@@ -18,3 +18,8 @@ export const errorResponseSchema = z.object({
   message: z.string(),
   statusCode: z.number().optional(),
 });
+
+export const messageResponseSchema = z.object({
+  message: z.string(),
+  statusCode: z.number().optional(),
+});
