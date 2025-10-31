@@ -22,6 +22,13 @@ function loadConfig() {
     argonMemoryCost: Number(process.env.ARGON_MEMORY_COST || 65536),
     argonTimeCost: Number(process.env.ARGON_TIME_COST || 3),
     argonParallelism: Number(process.env.ARGON_PARALLELISM || 4),
+    email: {
+      from: process.env.FROM_EMAIL || "books.com",
+      user: process.env.EMAIL_USER || "94007118947e14",
+      pass: process.env.EMAIL_PASS || "ced5f01bba6d07",
+      host: process.env.EMAIL_HOST || "smtp.mailtrap.io",
+      port: Number(process.env.EMAIL_PORT || 2525),
+    },
   };
 }
 
