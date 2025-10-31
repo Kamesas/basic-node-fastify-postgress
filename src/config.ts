@@ -22,6 +22,7 @@ function loadConfig() {
     argonMemoryCost: Number(process.env.ARGON_MEMORY_COST || 65536),
     argonTimeCost: Number(process.env.ARGON_TIME_COST || 3),
     argonParallelism: Number(process.env.ARGON_PARALLELISM || 4),
+    frontendUrl: process.env.FRONTEND_URL || "http://localhost:3000",
     email: {
       from: process.env.FROM_EMAIL || "books.com",
       user: process.env.EMAIL_USER || "94007118947e14",
