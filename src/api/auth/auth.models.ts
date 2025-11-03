@@ -29,7 +29,7 @@ type tRegisterEmailUserInput = {
   passwordHash: string;
 };
 
-export async function registerEmailUser(data: tRegisterEmailUserInput) {
+export async function registerWithEmail(data: tRegisterEmailUserInput) {
   return db.transaction().execute(async (trx) => {
     const user = await trx
       .insertInto("users")

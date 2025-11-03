@@ -43,18 +43,4 @@ export const registerRouteSchema = {
   },
 };
 
-export const verifyEmailSchema = z.object({
-  token: z.string().min(1, "Token is required"),
-});
-
-export const verifyEmailRouteSchema = {
-  params: verifyEmailSchema,
-  response: {
-    200: messageResponseSchema,
-    400: errorResponseSchema,
-    404: errorResponseSchema,
-  },
-};
-
 export type tRegisterInput = z.infer<typeof schemaRegister>;
-export type tVerifyEmailInput = z.infer<typeof verifyEmailSchema>;
