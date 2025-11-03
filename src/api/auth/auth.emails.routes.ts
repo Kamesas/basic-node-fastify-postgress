@@ -1,17 +1,17 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import {
-  verifyEmailRouteSchema,
-  resendVerificationEmailRouteSchema,
-} from "./auth.schemas";
+import { findUserByEmail } from "./auth.models";
+import { sendVerificationEmail } from "../../utils/emailService";
+import { generateVerificationToken } from "../../utils/token";
 import {
   findUserByVerificationToken,
   verifyUserEmail,
-  findUserByEmail,
   setEmailVerificationToken,
-} from "./auth.models";
-import { sendVerificationEmail } from "../../utils/emailService";
-import { generateVerificationToken } from "../../utils/token";
+} from "./auth.emails.models";
+import {
+  verifyEmailRouteSchema,
+  resendVerificationEmailRouteSchema,
+} from "./auth.emails.schemas";
 
 export default function authRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
