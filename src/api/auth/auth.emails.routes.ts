@@ -1,7 +1,17 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { verifyEmailRouteSchema } from "./auth.schemas";
-import { findUserByVerificationToken, verifyUserEmail } from "./auth.models";
+import {
+  verifyEmailRouteSchema,
+  resendVerificationEmailRouteSchema,
+} from "./auth.schemas";
+import {
+  findUserByVerificationToken,
+  verifyUserEmail,
+  findUserByEmail,
+  setEmailVerificationToken,
+} from "./auth.models";
+import { sendVerificationEmail } from "../../utils/emailService";
+import { generateVerificationToken } from "../../utils/token";
 
 export default function authRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
@@ -10,7 +20,7 @@ export default function authRoutes(fastify: FastifyInstance) {
     "/auth/verify-email",
     { schema: verifyEmailRouteSchema },
     async (request, reply) => {
-      const { token } = request.params;
+      const { token } = request.query;
 
       const user = await findUserByVerificationToken(token);
 
@@ -25,6 +35,38 @@ export default function authRoutes(fastify: FastifyInstance) {
 
       return reply.code(200).send({
         message: "Email verified successfully",
+      });
+    }
+  );
+
+  f.post(
+    "/auth/resend-verification",
+    { schema: resendVerificationEmailRouteSchema },
+    async (request, reply) => {
+      const { email } = request.body;
+
+      const user = await findUserByEmail(email);
+
+      if (!user || user.email_verified) {
+        return reply.code(200).send({
+          message:
+            "If this email is registered and unverified, a verification email has been sent",
+        });
+      }
+
+      const { token, expiresAt } = generateVerificationToken(24);
+      await setEmailVerificationToken(user.id, token, expiresAt);
+
+      await sendVerificationEmail(
+        email,
+        token,
+        user.display_name,
+        user.username
+      );
+
+      return reply.code(200).send({
+        message:
+          "If this email is registered and unverified, a verification email has been sent",
       });
     }
   );
