@@ -12,7 +12,7 @@ import {
   findUserWithEmailProvider,
 } from "./auth.models";
 import {
-  findRefreshToken,
+  findRefreshTokensByUserId,
   deleteRefreshToken,
   generateAndStoreTokens,
 } from "./auth.tokens.models";
@@ -53,6 +53,7 @@ export default function authRoutes(fastify: FastifyInstance) {
 
       if (email) {
         const { token, expiresAt } = generateVerificationToken(24);
+
         await setEmailVerificationToken(user.id, token, expiresAt);
 
         // TODO: Consider fire-and-forget or pg-boss for email sending to avoid blocking the response
@@ -118,6 +119,7 @@ export default function authRoutes(fastify: FastifyInstance) {
       const { refreshToken } = request.body;
 
       let decoded;
+
       try {
         decoded = verifyToken(refreshToken);
       } catch (error) {
@@ -126,8 +128,16 @@ export default function authRoutes(fastify: FastifyInstance) {
         });
       }
 
-      const tokenHash = await argonHash(refreshToken);
-      const storedToken = await findRefreshToken(tokenHash);
+      const userTokens = await findRefreshTokensByUserId(decoded.userId);
+
+      let storedToken = null;
+      for (const token of userTokens) {
+        const isValid = await argonVerify(refreshToken, token.token_hash);
+        if (isValid) {
+          storedToken = token;
+          break;
+        }
+      }
 
       if (!storedToken) {
         return reply.code(401).send({

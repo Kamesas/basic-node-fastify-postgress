@@ -36,6 +36,15 @@ export async function findRefreshToken(tokenHash: string) {
     .executeTakeFirst();
 }
 
+export async function findRefreshTokensByUserId(userId: number) {
+  return db
+    .selectFrom("refresh_tokens")
+    .selectAll()
+    .where("user_id", "=", userId)
+    .where("revoked_at", "is", null)
+    .execute();
+}
+
 export async function deleteRefreshToken(id: number) {
   return db
     .deleteFrom("refresh_tokens")
