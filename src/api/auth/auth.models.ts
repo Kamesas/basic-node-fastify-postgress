@@ -1,5 +1,4 @@
 import { db } from "../../_db/dbInstance";
-import { JsonValue } from "../../_db/dbTypes";
 import { tRegisterInput } from "./auth.schemas";
 
 export const PROVIDER_TYPES = {
@@ -80,24 +79,4 @@ export async function registerWithEmail(data: tRegisterEmailUserInput) {
       authProvider,
     };
   });
-}
-
-type tStoreRefreshTokenInput = {
-  userId: number;
-  tokenHash: string;
-  expiresAt: Date;
-  deviceInfo?: JsonValue | null;
-};
-
-export async function storeRefreshToken(data: tStoreRefreshTokenInput) {
-  return db
-    .insertInto("refresh_tokens")
-    .values({
-      user_id: data.userId,
-      token_hash: data.tokenHash,
-      expires_at: data.expiresAt,
-      device_info: (data.deviceInfo as JsonValue) || null,
-    })
-    .returningAll()
-    .executeTakeFirstOrThrow();
 }

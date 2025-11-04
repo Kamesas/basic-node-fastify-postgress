@@ -22,6 +22,10 @@ export const schemaRegister = schemaLogin.extend({
     .optional(),
 });
 
+export const schemaRefresh = z.object({
+  refreshToken: z.string().min(1, "Refresh token is required"),
+});
+
 const loginDataSchema = z.object({
   user: z.object({
     id: z.number(),
@@ -30,6 +34,11 @@ const loginDataSchema = z.object({
     displayName: z.string().nullable(),
     createdAt: z.string(),
   }),
+  accessToken: z.string(),
+  refreshToken: z.string(),
+});
+
+const tokensSchema = z.object({
   accessToken: z.string(),
   refreshToken: z.string(),
 });
@@ -51,6 +60,15 @@ export const loginRouteSchema = {
     401: messageResponseSchema,
     403: messageResponseSchema,
     404: messageResponseSchema,
+  },
+};
+
+export const refreshRouteSchema = {
+  body: schemaRefresh,
+  response: {
+    200: tokensSchema,
+    400: errorResponseSchema,
+    401: messageResponseSchema,
   },
 };
 

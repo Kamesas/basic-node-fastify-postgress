@@ -1,22 +1,26 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { loginRouteSchema, registerRouteSchema } from "./auth.schemas";
+import {
+  loginRouteSchema,
+  registerRouteSchema,
+  refreshRouteSchema,
+} from "./auth.schemas";
 import { argonHash, argonVerify } from "../../utils/argon";
 import {
   findUserByUsernameOrEmail,
   registerWithEmail,
   findUserWithEmailProvider,
-  storeRefreshToken,
 } from "./auth.models";
+import {
+  findRefreshToken,
+  deleteRefreshToken,
+  generateAndStoreTokens,
+} from "./auth.tokens.models";
 import { sendVerificationEmail } from "../../utils/emailService";
 import { generateVerificationToken } from "../../utils/token";
 import authEmailRoutes from "./auth.emails.routes";
 import { setEmailVerificationToken } from "./auth.emails.models";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-  tJwtPayload,
-} from "../../utils/jwt";
+import { verifyToken, tJwtPayload } from "../../utils/jwt";
 
 export default function authRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
@@ -90,17 +94,10 @@ export default function authRoutes(fastify: FastifyInstance) {
         userId: user.id,
       };
 
-      const accessToken = generateAccessToken(tokenData);
-      const refreshToken = generateRefreshToken(tokenData);
-
-      await storeRefreshToken({
-        userId: user.id,
-        tokenHash: await argonHash(refreshToken),
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
-        deviceInfo: request.headers["user-agent"] // TODO: Add device info
-          ? { userAgent: request.headers["user-agent"] }
-          : null,
-      });
+      const { accessToken, refreshToken } = await generateAndStoreTokens(
+        tokenData,
+        request.headers["user-agent"]
+      );
 
       return reply.code(201).send({
         user: {
@@ -114,11 +111,56 @@ export default function authRoutes(fastify: FastifyInstance) {
     }
   );
 
-  f.post("/auth/refresh", async (_request, reply) => {
-    return reply.code(501).send({
-      message: "Refresh token endpoint - not implemented yet",
-    });
-  });
+  f.post(
+    "/auth/refresh",
+    { schema: refreshRouteSchema },
+    async (request, reply) => {
+      const { refreshToken } = request.body;
+
+      let decoded;
+      try {
+        decoded = verifyToken(refreshToken);
+      } catch (error) {
+        return reply.code(401).send({
+          message: error instanceof Error ? error.message : "Invalid token",
+        });
+      }
+
+      const tokenHash = await argonHash(refreshToken);
+      const storedToken = await findRefreshToken(tokenHash);
+
+      if (!storedToken) {
+        return reply.code(401).send({
+          message: "Invalid or revoked token",
+        });
+      }
+
+      if (
+        new Date() > new Date(storedToken.expires_at) ||
+        storedToken.user_id !== decoded.userId
+      ) {
+        return reply.code(401).send({
+          message: "Token is invalid",
+        });
+      }
+
+      const tokenData: tJwtPayload = {
+        userId: decoded.userId,
+        username: decoded.username,
+        email: decoded.email,
+      };
+
+      await deleteRefreshToken(storedToken.id);
+
+      const { accessToken, refreshToken: newRefreshToken } =
+        await generateAndStoreTokens(tokenData, request.headers["user-agent"]);
+
+      return reply.code(200).send({
+        accessToken,
+        refreshToken: newRefreshToken,
+      });
+    }
+  );
 
   f.post("/auth/logout", async (_request, reply) => {
     return reply.code(501).send({
