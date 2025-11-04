@@ -22,17 +22,17 @@ export const schemaRegister = schemaLogin.extend({
     .optional(),
 });
 
-// const registerDataSchema = z.object({
-//   user: z.object({
-//     id: z.number(),
-//     username: z.string(),
-//     email: z.string().nullable(),
-//     displayName: z.string().nullable(),
-//     createdAt: z.string(),
-//   }),
-//   accessToken: z.string(),
-//   refreshToken: z.string(),
-// });
+const loginDataSchema = z.object({
+  user: z.object({
+    id: z.number(),
+    username: z.string(),
+    email: z.string().nullable(),
+    displayName: z.string().nullable(),
+    createdAt: z.string(),
+  }),
+  accessToken: z.string(),
+  refreshToken: z.string(),
+});
 
 export const registerRouteSchema = {
   body: schemaRegister,
@@ -40,6 +40,17 @@ export const registerRouteSchema = {
     201: messageResponseSchema,
     400: errorResponseSchema,
     409: errorResponseSchema,
+  },
+};
+
+export const loginRouteSchema = {
+  body: schemaLogin,
+  response: {
+    201: loginDataSchema,
+    400: errorResponseSchema,
+    401: messageResponseSchema,
+    403: messageResponseSchema,
+    404: messageResponseSchema,
   },
 };
 

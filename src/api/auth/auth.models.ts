@@ -22,6 +22,17 @@ export async function findUserByEmail(email: string) {
     .executeTakeFirst();
 }
 
+export async function findUserWithEmailProvider(email: string) {
+  return db
+    .selectFrom("users")
+    .innerJoin("auth_providers", "auth_providers.user_id", "users.id")
+    .selectAll("users")
+    .select(["auth_providers.password_hash"])
+    .where("users.email", "=", email)
+    .where("auth_providers.provider_type", "=", PROVIDER_TYPES.EMAIL)
+    .executeTakeFirst();
+}
+
 type tRegisterEmailUserInput = {
   username: tRegisterInput["username"];
   email?: tRegisterInput["email"];
