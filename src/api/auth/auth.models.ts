@@ -22,6 +22,19 @@ export async function findUserByEmail(email: string) {
     .executeTakeFirst();
 }
 
+export async function findUserByUsernameOrEmail(
+  username: string,
+  email: string
+) {
+  return db
+    .selectFrom("users")
+    .selectAll()
+    .where((eb) =>
+      eb.or([eb("username", "=", username), eb("email", "=", email)])
+    )
+    .executeTakeFirst();
+}
+
 export async function findUserWithEmailProvider(email: string) {
   return db
     .selectFrom("users")

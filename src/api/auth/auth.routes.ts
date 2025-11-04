@@ -3,8 +3,7 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { loginRouteSchema, registerRouteSchema } from "./auth.schemas";
 import { argonHash, argonVerify } from "../../utils/argon";
 import {
-  findUserByUsername,
-  findUserByEmail,
+  findUserByUsernameOrEmail,
   registerWithEmail,
   findUserWithEmailProvider,
   storeRefreshToken,
@@ -30,10 +29,9 @@ export default function authRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       const { username, email, displayName, password } = request.body;
 
-      const existingUser = await findUserByUsername(username);
-      const existingEmail = email ? await findUserByEmail(email) : null;
+      const existingUser = await findUserByUsernameOrEmail(username, email);
 
-      if (existingUser || existingEmail) {
+      if (existingUser) {
         return reply.code(409).send({
           error: "Conflict",
           message: "Username or email already exists",
@@ -71,6 +69,7 @@ export default function authRoutes(fastify: FastifyInstance) {
 
       const user = await findUserWithEmailProvider(email);
       // TODO: good for urer expirience and bad for security
+      // TODO: as an option could be added rate limiting and maybe CAPTCHA
 
       if (!user || !user.password_hash) {
         return reply.code(401).send({ message: "Invalid credentials" });
