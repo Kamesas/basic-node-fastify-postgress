@@ -4,6 +4,7 @@ import {
   loginRouteSchema,
   registerRouteSchema,
   refreshRouteSchema,
+  logoutRouteSchema,
 } from "./auth.schemas";
 import { argonHash, argonVerify } from "../../utils/argon";
 import {
@@ -172,9 +173,34 @@ export default function authRoutes(fastify: FastifyInstance) {
     }
   );
 
-  f.post("/auth/logout", async (_request, reply) => {
-    return reply.code(501).send({
-      message: "Logout endpoint - not implemented yet",
-    });
-  });
+  f.post(
+    "/auth/logout",
+    { schema: logoutRouteSchema },
+    async (request, reply) => {
+      const { refreshToken } = request.body;
+
+      let decoded;
+      try {
+        decoded = verifyToken(refreshToken);
+      } catch {
+        return reply.code(200).send({ message: "Logged out" });
+      }
+
+      if (!decoded?.userId) {
+        return reply.code(200).send({ message: "Logged out" });
+      }
+
+      const tokens = await findRefreshTokensByUserId(decoded.userId);
+
+      for (const token of tokens) {
+        const matches = await argonVerify(refreshToken, token.token_hash);
+        if (matches) {
+          await deleteRefreshToken(token.id);
+          break;
+        }
+      }
+
+      return reply.code(200).send({ message: "Logged out" });
+    }
+  );
 }

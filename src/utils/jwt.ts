@@ -39,3 +39,9 @@ export const verifyToken = (token: string): tJwtVerifyResult => {
     throw error;
   }
 };
+
+export const decodeToken = (
+  token: string
+): (tJwtPayload & { iat?: number; exp?: number }) | null => {
+  return jwt.decode(token) as tJwtPayload;
+};

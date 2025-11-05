@@ -72,4 +72,12 @@ export const refreshRouteSchema = {
   },
 };
 
+export const logoutRouteSchema = {
+  body: schemaRefresh,
+  response: {
+    200: messageResponseSchema,
+    400: errorResponseSchema,
+  },
+};
+
 export type tRegisterInput = z.infer<typeof schemaRegister>;
