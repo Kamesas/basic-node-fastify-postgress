@@ -52,6 +52,13 @@ export async function deleteRefreshToken(id: number) {
     .executeTakeFirst();
 }
 
+export async function deleteRefreshTokensByUserId(userId: number) {
+  return db
+    .deleteFrom("refresh_tokens")
+    .where("user_id", "=", userId)
+    .execute();
+}
+
 export async function generateAndStoreTokens(
   tokenData: tJwtPayload,
   userAgent: string | undefined

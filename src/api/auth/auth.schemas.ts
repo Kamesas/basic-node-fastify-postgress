@@ -80,4 +80,13 @@ export const logoutRouteSchema = {
   },
 };
 
+export const logoutAllRouteSchema = {
+  body: schemaRefresh,
+  response: {
+    200: messageResponseSchema,
+    400: errorResponseSchema,
+    401: messageResponseSchema,
+  },
+};
+
 export type tRegisterInput = z.infer<typeof schemaRegister>;

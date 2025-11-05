@@ -4,7 +4,6 @@ import {
   loginRouteSchema,
   registerRouteSchema,
   refreshRouteSchema,
-  logoutRouteSchema,
 } from "./auth.schemas";
 import { argonHash, argonVerify } from "../../utils/argon";
 import {
@@ -20,6 +19,7 @@ import {
 import { sendVerificationEmail } from "../../utils/emailService";
 import { generateVerificationToken } from "../../utils/token";
 import authEmailRoutes from "./auth.emails.routes";
+import authLogoutRoutes from "./auth.logout.routes";
 import { setEmailVerificationToken } from "./auth.emails.models";
 import { verifyToken, tJwtPayload } from "../../utils/jwt";
 
@@ -27,6 +27,7 @@ export default function authRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
 
   fastify.register(authEmailRoutes);
+  fastify.register(authLogoutRoutes);
 
   f.post(
     "/auth/register",
@@ -170,37 +171,6 @@ export default function authRoutes(fastify: FastifyInstance) {
         accessToken,
         refreshToken: newRefreshToken,
       });
-    }
-  );
-
-  f.post(
-    "/auth/logout",
-    { schema: logoutRouteSchema },
-    async (request, reply) => {
-      const { refreshToken } = request.body;
-
-      let decoded;
-      try {
-        decoded = verifyToken(refreshToken);
-      } catch {
-        return reply.code(200).send({ message: "Logged out" });
-      }
-
-      if (!decoded?.userId) {
-        return reply.code(200).send({ message: "Logged out" });
-      }
-
-      const tokens = await findRefreshTokensByUserId(decoded.userId);
-
-      for (const token of tokens) {
-        const matches = await argonVerify(refreshToken, token.token_hash);
-        if (matches) {
-          await deleteRefreshToken(token.id);
-          break;
-        }
-      }
-
-      return reply.code(200).send({ message: "Logged out" });
     }
   );
 }
