@@ -1,28 +1,21 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import {
-  loginRouteSchema,
-  registerRouteSchema,
-  refreshRouteSchema,
-} from "./auth.schemas";
+import { loginRouteSchema, registerRouteSchema } from "./auth.schemas";
 import { argonHash, argonVerify } from "../../utils/argon";
 import {
   findUserByUsernameOrEmail,
   registerWithEmail,
   findUserWithEmailProvider,
 } from "./auth.models";
-import {
-  findRefreshTokensByUserId,
-  deleteRefreshToken,
-  generateAndStoreTokens,
-} from "./auth.tokens.models";
+import { generateAndStoreTokens } from "./auth.tokens.models";
 import { sendVerificationEmail } from "../../utils/emailService";
 import { generateVerificationToken } from "../../utils/token";
 import authEmailRoutes from "./auth.emails.routes";
 import authLogoutRoutes from "./auth.logout.routes";
 import authPasswordRoutes from "./auth.password.routes";
 import { setEmailVerificationToken } from "./auth.emails.models";
-import { verifyToken, tJwtPayload } from "../../utils/jwt";
+import { tJwtPayload } from "../../utils/jwt";
+import authTokensRoutes from "./auth.tokens.routes";
 
 export default function authRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
@@ -30,6 +23,7 @@ export default function authRoutes(fastify: FastifyInstance) {
   fastify.register(authEmailRoutes);
   fastify.register(authLogoutRoutes);
   fastify.register(authPasswordRoutes);
+  fastify.register(authTokensRoutes);
 
   f.post(
     "/auth/register",
@@ -112,66 +106,6 @@ export default function authRoutes(fastify: FastifyInstance) {
         },
         accessToken,
         refreshToken,
-      });
-    }
-  );
-
-  f.post(
-    "/auth/refresh",
-    { schema: refreshRouteSchema },
-    async (request, reply) => {
-      const { refreshToken } = request.body;
-
-      let decoded;
-
-      try {
-        decoded = verifyToken(refreshToken);
-      } catch (error) {
-        return reply.code(401).send({
-          message: error instanceof Error ? error.message : "Invalid token",
-        });
-      }
-
-      const userTokens = await findRefreshTokensByUserId(decoded.userId);
-
-      let storedToken = null;
-      for (const token of userTokens) {
-        const isValid = await argonVerify(refreshToken, token.token_hash);
-        if (isValid) {
-          storedToken = token;
-          break;
-        }
-      }
-
-      if (!storedToken) {
-        return reply.code(401).send({
-          message: "Invalid or revoked token",
-        });
-      }
-
-      if (
-        new Date() > new Date(storedToken.expires_at) ||
-        storedToken.user_id !== decoded.userId
-      ) {
-        return reply.code(401).send({
-          message: "Token is invalid",
-        });
-      }
-
-      const tokenData: tJwtPayload = {
-        userId: decoded.userId,
-        username: decoded.username,
-        email: decoded.email,
-      };
-
-      await deleteRefreshToken(storedToken.id);
-
-      const { accessToken, refreshToken: newRefreshToken } =
-        await generateAndStoreTokens(tokenData, request.headers["user-agent"]);
-
-      return reply.code(200).send({
-        accessToken,
-        refreshToken: newRefreshToken,
       });
     }
   );
