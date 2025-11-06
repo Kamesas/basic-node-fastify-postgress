@@ -20,6 +20,7 @@ import { sendVerificationEmail } from "../../utils/emailService";
 import { generateVerificationToken } from "../../utils/token";
 import authEmailRoutes from "./auth.emails.routes";
 import authLogoutRoutes from "./auth.logout.routes";
+import authPasswordRoutes from "./auth.password.routes";
 import { setEmailVerificationToken } from "./auth.emails.models";
 import { verifyToken, tJwtPayload } from "../../utils/jwt";
 
@@ -28,6 +29,7 @@ export default function authRoutes(fastify: FastifyInstance) {
 
   fastify.register(authEmailRoutes);
   fastify.register(authLogoutRoutes);
+  fastify.register(authPasswordRoutes);
 
   f.post(
     "/auth/register",

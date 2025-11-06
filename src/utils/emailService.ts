@@ -45,7 +45,7 @@ export async function sendPasswordResetEmail(
       <p><a href="${resetUrl}">Reset Password</a></p>
       <p>Or copy and paste this link into your browser:</p>
       <p>${resetUrl}</p>
-      <p>This link will expire in 1 hour.</p>
+      <p>This link will expire in 15min.</p>
       <p>If you didn't request this, please ignore this email and your password will remain unchanged.</p>
     `,
     text: `Hi ${name},\n\nWe received a request to reset your password. Visit this link to reset it: ${resetUrl}\n\nThis link will expire in 1 hour.\n\nIf you didn't request this, please ignore this email.`,
