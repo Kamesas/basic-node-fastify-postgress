@@ -24,6 +24,7 @@
   "dependencies": {
     "@fastify/autoload": "^6.0.0",
     "@fastify/helmet": "^13.0.2",
+    "@fastify/oauth2": "^8.1.2",
     "@fastify/sensible": "^6.0.0",
     "argon2": "^0.44.0",
     "dotenv": "^17.2.3",

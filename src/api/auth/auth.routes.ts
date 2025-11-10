@@ -16,6 +16,7 @@ import authPasswordRoutes from "./auth.password.routes";
 import { setEmailVerificationToken } from "./auth.emails.models";
 import { tJwtPayload } from "../../utils/jwt";
 import authTokensRoutes from "./auth.tokens.routes";
+import googleAuthRoutes from "./auth.google.routes";
 
 export default function authRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
@@ -24,6 +25,7 @@ export default function authRoutes(fastify: FastifyInstance) {
   fastify.register(authLogoutRoutes);
   fastify.register(authPasswordRoutes);
   fastify.register(authTokensRoutes);
+  fastify.register(googleAuthRoutes);
 
   f.post(
     "/auth/register",
