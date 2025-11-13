@@ -12,39 +12,35 @@ import { verifyToken } from "../../utils/jwt";
 export default async function authLogoutRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
 
-  f.post(
-    "/auth/logout",
-    { schema: logoutRouteSchema },
-    async (request, reply) => {
-      const { refreshToken } = request.body;
+  f.post("/logout", { schema: logoutRouteSchema }, async (request, reply) => {
+    const { refreshToken } = request.body;
 
-      let decoded;
-      try {
-        decoded = verifyToken(refreshToken);
-      } catch {
-        return reply.code(200).send({ message: "Logged out" });
-      }
-
-      if (!decoded?.userId) {
-        return reply.code(200).send({ message: "Logged out" });
-      }
-
-      const tokens = await findRefreshTokensByUserId(decoded.userId);
-
-      for (const token of tokens) {
-        const matches = await argonVerify(refreshToken, token.token_hash);
-        if (matches) {
-          await deleteRefreshToken(token.id);
-          break;
-        }
-      }
-
+    let decoded;
+    try {
+      decoded = verifyToken(refreshToken);
+    } catch {
       return reply.code(200).send({ message: "Logged out" });
     }
-  );
+
+    if (!decoded?.userId) {
+      return reply.code(200).send({ message: "Logged out" });
+    }
+
+    const tokens = await findRefreshTokensByUserId(decoded.userId);
+
+    for (const token of tokens) {
+      const matches = await argonVerify(refreshToken, token.token_hash);
+      if (matches) {
+        await deleteRefreshToken(token.id);
+        break;
+      }
+    }
+
+    return reply.code(200).send({ message: "Logged out" });
+  });
 
   f.post(
-    "/auth/logout-all",
+    "/logout-all",
     { schema: logoutAllRouteSchema },
     async (request, reply) => {
       const { refreshToken } = request.body;

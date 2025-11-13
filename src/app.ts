@@ -34,7 +34,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
 
   // Routes
   fastify.register(usersRoutes, { prefix: "/api" });
-  fastify.register(authRoutes, { prefix: "/api" });
+  fastify.register(authRoutes, { prefix: "/api/auth" });
   // Plugins
   // eslint-disable-next-line no-void
   void fastify.register(AutoLoad, {

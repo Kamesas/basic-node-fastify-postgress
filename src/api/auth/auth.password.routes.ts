@@ -16,7 +16,7 @@ export default async function authPasswordRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
 
   f.post(
-    "/auth/forgot-password",
+    "/forgot-password",
     { schema: forgotPasswordSchema },
     async (request, reply) => {
       const { email } = request.body;
@@ -35,7 +35,7 @@ export default async function authPasswordRoutes(fastify: FastifyInstance) {
   );
 
   f.post(
-    "/auth/reset-password",
+    "/reset-password",
     { schema: resetPasswordSchema },
     async (request, reply) => {
       const { token, password, email } = request.body;

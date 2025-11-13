@@ -17,7 +17,7 @@ export default function authRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
 
   f.get(
-    "/auth/verify-email",
+    "/verify-email",
     { schema: verifyEmailRouteSchema },
     async (request, reply) => {
       const { token } = request.query;
@@ -40,7 +40,7 @@ export default function authRoutes(fastify: FastifyInstance) {
   );
 
   f.post(
-    "/auth/resend-verification",
+    "/resend-verification",
     { schema: resendVerificationEmailRouteSchema },
     async (request, reply) => {
       const { email } = request.body;

@@ -3,6 +3,7 @@ import { tRegisterInput } from "./auth.schemas";
 
 export const PROVIDER_TYPES = {
   EMAIL: "email",
+  GOOGLE: "google",
 } as const;
 
 export async function findUserByUsername(username: string) {

@@ -1,11 +1,6 @@
 import { db } from "../../_db/dbInstance";
 import { JsonValue } from "../../_db/dbTypes";
 import { argonHash } from "../../utils/argon";
-import {
-  tJwtPayload,
-  generateAccessToken,
-  generateRefreshToken,
-} from "../../utils/jwt";
 
 type tStoreRefreshTokenInput = {
   userId: number;
@@ -59,19 +54,15 @@ export async function deleteRefreshTokensByUserId(userId: number) {
     .execute();
 }
 
-export async function generateAndStoreTokens(
-  tokenData: tJwtPayload,
+export async function storeTokens(
+  userId: number,
+  refreshToken: string,
   userAgent: string | undefined
 ) {
-  const accessToken = generateAccessToken(tokenData);
-  const refreshToken = generateRefreshToken(tokenData);
-
   await storeRefreshToken({
-    userId: tokenData.userId,
+    userId,
     tokenHash: await argonHash(refreshToken),
     expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
     deviceInfo: userAgent ? { userAgent } : null,
   });
-
-  return { accessToken, refreshToken };
 }

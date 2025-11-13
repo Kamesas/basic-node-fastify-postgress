@@ -27,10 +27,10 @@ const oauthSetup: FastifyPluginAsync = async (fastify) => {
       },
       auth: oauthPlugin.GOOGLE_CONFIGURATION,
     },
-    startRedirectPath: "/login/google",
+    startRedirectPath: "/api/auth/login/google",
     callbackUri:
       process.env.GOOGLE_CALLBACK_URL ||
-      "http://localhost:4000/login/google/callback",
+      "http://localhost:4000/api/auth/login/google/callback",
     scope: ["profile", "email"],
   });
 };
