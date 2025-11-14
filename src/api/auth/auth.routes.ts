@@ -21,6 +21,7 @@ import {
 } from "../../utils/jwt";
 import authTokensRoutes from "./auth.tokens.routes";
 import googleAuthRoutes from "./auth.google.routes";
+import { setAuthCookies } from "../../utils/authCookies";
 
 export default function authRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
@@ -104,6 +105,8 @@ export default function authRoutes(fastify: FastifyInstance) {
       refreshToken,
       request.headers["user-agent"]
     );
+
+    setAuthCookies(reply, accessToken, refreshToken);
 
     return reply.code(201).send({
       user: {
