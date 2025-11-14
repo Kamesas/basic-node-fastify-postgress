@@ -8,21 +8,33 @@ import {
 } from "./auth.tokens.models";
 import { argonVerify } from "../../utils/argon";
 import { verifyToken } from "../../utils/jwt";
+import { clearAuthCookies } from "../../utils/authCookies";
 
 export default async function authLogoutRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
 
   f.post("/logout", { schema: logoutRouteSchema }, async (request, reply) => {
-    const { refreshToken } = request.body;
+    let refreshToken = request.cookies.refreshToken; // Web browsers
+
+    if (!refreshToken && request.body?.refreshToken) {
+      refreshToken = request.body.refreshToken;
+    }
+
+    if (!refreshToken) {
+      clearAuthCookies(reply);
+      return reply.code(200).send({ message: "Logged out" });
+    }
 
     let decoded;
     try {
       decoded = verifyToken(refreshToken);
     } catch {
+      clearAuthCookies(reply);
       return reply.code(200).send({ message: "Logged out" });
     }
 
     if (!decoded?.userId) {
+      clearAuthCookies(reply);
       return reply.code(200).send({ message: "Logged out" });
     }
 
@@ -36,6 +48,7 @@ export default async function authLogoutRoutes(fastify: FastifyInstance) {
       }
     }
 
+    clearAuthCookies(reply);
     return reply.code(200).send({ message: "Logged out" });
   });
 
@@ -43,16 +56,27 @@ export default async function authLogoutRoutes(fastify: FastifyInstance) {
     "/logout-all",
     { schema: logoutAllRouteSchema },
     async (request, reply) => {
-      const { refreshToken } = request.body;
+      let refreshToken = request.cookies.refreshToken; // Web browsers
+
+      if (!refreshToken && request.body?.refreshToken) {
+        refreshToken = request.body.refreshToken;
+      }
+
+      if (!refreshToken) {
+        clearAuthCookies(reply);
+        return reply.code(200).send({ message: "Logged out from all devices" });
+      }
 
       let decoded;
       try {
         decoded = verifyToken(refreshToken);
       } catch {
+        clearAuthCookies(reply);
         return reply.code(200).send({ message: "Logged out from all devices" });
       }
 
       if (!decoded?.userId) {
+        clearAuthCookies(reply);
         return reply.code(200).send({ message: "Logged out from all devices" });
       }
 
@@ -67,11 +91,13 @@ export default async function authLogoutRoutes(fastify: FastifyInstance) {
       }
 
       if (!isValidToken) {
+        clearAuthCookies(reply);
         return reply.code(401).send({ message: "Invalid refresh token" });
       }
 
       await deleteRefreshTokensByUserId(decoded.userId);
 
+      clearAuthCookies(reply);
       return reply.code(200).send({ message: "Logged out from all devices" });
     }
   );

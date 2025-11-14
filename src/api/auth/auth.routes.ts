@@ -115,7 +115,7 @@ export default function authRoutes(fastify: FastifyInstance) {
         createdAt: user.created_at.toISOString(), // TODO: Need to adjust dates
       },
       accessToken,
-      refreshToken,
+      refreshToken, // can be used to mobile
     });
   });
 }

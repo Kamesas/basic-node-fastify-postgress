@@ -1,26 +1,29 @@
 import { FastifyReply } from "fastify";
 import { config } from "../config";
 
-// TODO: need to read about all these one more time
-
+/**
+ * Sets authentication cookies
+ * Access token: Returned in response body for Authorization header usage
+ * Refresh token: Set as httpOnly cookie for security
+ */
 export function setAuthCookies(
   reply: FastifyReply,
   accessToken: string,
   refreshToken: string
 ): void {
-  reply.setCookie("accessToken", accessToken, {
-    httpOnly: true, // Prevents JavaScript from accessing the cookie (XSS protection)
-    secure: config.nodeEnv === "production", // Only send cookie over HTTPS in production
-    sameSite: "lax", // Prevents CSRF attacks while allowing navigation from external sites
-    path: "/", // Cookie is valid for all routes
-    maxAge: 15 * 60, // Cookie expires in 15 minutes (in seconds)
-  });
-
+  // Only set refresh token as httpOnly cookie
+  // Access token will be sent in response body and used via Authorization header
   reply.setCookie("refreshToken", refreshToken, {
     httpOnly: true, // Prevents JavaScript from accessing the cookie (XSS protection)
     secure: config.nodeEnv === "production", // Only send cookie over HTTPS in production
     sameSite: "lax", // Prevents CSRF attacks while allowing navigation from external sites
-    path: "/api/auth/refresh", // Cookie only sent to refresh endpoint (minimizes exposure)
-    maxAge: 7 * 24 * 60 * 60, // Cookie expires in 7 days (in seconds)
+    path: "/api/auth", // Cookie sent to all auth endpoints (login, refresh, logout)
+    maxAge: config.refreshTokenCookieMaxAge, // Matches JWT refresh token expiry (7 days)
+  });
+}
+
+export function clearAuthCookies(reply: FastifyReply): void {
+  reply.clearCookie("refreshToken", {
+    path: "/api/auth",
   });
 }

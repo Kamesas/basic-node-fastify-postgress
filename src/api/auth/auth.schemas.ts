@@ -23,7 +23,7 @@ export const schemaRegister = schemaLogin.extend({
 });
 
 export const schemaRefresh = z.object({
-  refreshToken: z.string().min(1, "Refresh token is required"),
+  refreshToken: z.string().optional(),
 });
 
 const loginDataSchema = z.object({
@@ -35,12 +35,12 @@ const loginDataSchema = z.object({
     createdAt: z.string(),
   }),
   accessToken: z.string(),
-  refreshToken: z.string(),
+  refreshToken: z.string(), // For mobile apps
 });
 
 const tokensSchema = z.object({
   accessToken: z.string(),
-  refreshToken: z.string(),
+  refreshToken: z.string(), // For mobile apps
 });
 
 export const registerRouteSchema = {

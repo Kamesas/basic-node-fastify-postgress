@@ -96,6 +96,7 @@ export default async function googleAuthRoutes(fastify: FastifyInstance) {
 
       const frontendRedirectUrl = new URL("/auth/callback", config.frontendUrl);
       frontendRedirectUrl.searchParams.set("success", "true");
+      frontendRedirectUrl.searchParams.set("accessToken", accessToken);
 
       return reply.redirect(frontendRedirectUrl.toString());
     } catch {

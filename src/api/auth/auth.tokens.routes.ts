@@ -13,12 +13,24 @@ import {
   deleteRefreshToken,
   storeTokens,
 } from "./auth.tokens.models";
+import { setAuthCookies } from "../../utils/authCookies";
 
 export default function authTokensRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
 
   f.post("/refresh", { schema: refreshRouteSchema }, async (request, reply) => {
-    const { refreshToken } = request.body;
+    let refreshToken = request.cookies.refreshToken;
+
+    // If no cookie, check request body (mobile apps)
+    if (!refreshToken && request.body?.refreshToken) {
+      refreshToken = request.body.refreshToken;
+    }
+
+    if (!refreshToken) {
+      return reply.code(401).send({
+        message: "No refresh token provided",
+      });
+    }
 
     let decoded;
 
@@ -73,9 +85,11 @@ export default function authTokensRoutes(fastify: FastifyInstance) {
       request.headers["user-agent"]
     );
 
+    setAuthCookies(reply, accessToken, newRefreshToken);
+
     return reply.code(200).send({
       accessToken,
-      refreshToken: newRefreshToken,
+      refreshToken: newRefreshToken, // For mobile apps - web will use cookie
     });
   });
 }
