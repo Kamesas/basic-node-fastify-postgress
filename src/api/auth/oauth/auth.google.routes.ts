@@ -4,10 +4,10 @@ import {
   findUserByGoogleId,
   loginOrRegisterWithGoogle,
 } from "./auth.google.models";
-import { storeTokens } from "./auth.tokens.models";
-import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
-import { config } from "../../config";
-import { setAuthCookies } from "../../utils/authCookies";
+import { setAuthCookies } from "../../../utils/authCookies";
+import { generateAccessToken, generateRefreshToken } from "../../../utils/jwt";
+import { storeTokens } from "../tokens/auth.tokens.models";
+import { config } from "../../../config";
 
 type GoogleUserInfo = {
   id: string;
@@ -22,6 +22,7 @@ type GoogleUserInfo = {
 
 export default async function googleAuthRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
+
   f.get("/login/google/callback", async (request, reply) => {
     try {
       const { token } =

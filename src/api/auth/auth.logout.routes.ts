@@ -5,7 +5,7 @@ import {
   deleteRefreshToken,
   deleteRefreshTokensByUserId,
   findRefreshTokensByUserId,
-} from "./auth.tokens.models";
+} from "./tokens/auth.tokens.models";
 import { argonVerify } from "../../utils/argon";
 import { verifyToken } from "../../utils/jwt";
 import { clearAuthCookies } from "../../utils/authCookies";

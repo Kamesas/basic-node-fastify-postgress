@@ -1,19 +1,19 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { argonVerify } from "../../utils/argon";
+import { argonVerify } from "../../../utils/argon";
 import {
   tJwtPayload,
   verifyToken,
   generateAccessToken,
   generateRefreshToken,
-} from "../../utils/jwt";
-import { refreshRouteSchema } from "./auth.schemas";
+} from "../../../utils/jwt";
+import { refreshRouteSchema } from "./../auth.schemas";
 import {
   findRefreshTokensByUserId,
   deleteRefreshToken,
   storeTokens,
 } from "./auth.tokens.models";
-import { setAuthCookies } from "../../utils/authCookies";
+import { setAuthCookies } from "../../../utils/authCookies";
 
 export default function authTokensRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();

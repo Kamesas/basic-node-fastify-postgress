@@ -1,5 +1,8 @@
 import z from "zod";
-import { errorResponseSchema, messageResponseSchema } from "../common.schemas";
+import {
+  errorResponseSchema,
+  messageResponseSchema,
+} from "../../common.schemas";
 
 export const verifyEmailSchema = z.object({
   token: z.string().min(1, "Token is required"),

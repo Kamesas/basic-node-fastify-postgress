@@ -1,16 +1,16 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { argonHash, argonVerify } from "../../utils/argon";
-import { sendPasswordResetEmail } from "../../utils/emailService";
-import { generateVerificationToken } from "../../utils/token";
-import { findUserByEmail } from "./auth.models";
+import { db } from "../../../_db/dbInstance";
+import { argonHash, argonVerify } from "../../../utils/argon";
+import { sendPasswordResetEmail } from "../../../utils/emailService";
+import { generateVerificationToken } from "../../../utils/token";
+import { findUserByEmail } from "../auth.models";
+import { forgotPasswordSchema, resetPasswordSchema } from "../auth.schemas";
 import {
   deletePasswordResetToken,
   storePasswordResetToken,
   updateUserPassword,
 } from "./auth.password.models";
-import { forgotPasswordSchema, resetPasswordSchema } from "./auth.schemas";
-import { db } from "../../_db/dbInstance";
 
 export default async function authPasswordRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();

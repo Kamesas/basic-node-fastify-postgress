@@ -1,6 +1,6 @@
-import { db } from "../../_db/dbInstance";
-import { JsonValue } from "../../_db/dbTypes";
-import { argonHash } from "../../utils/argon";
+import { db } from "../../../_db/dbInstance";
+import { JsonValue } from "../../../_db/dbTypes";
+import { argonHash } from "../../../utils/argon";
 
 type tStoreRefreshTokenInput = {
   userId: number;

@@ -1,5 +1,5 @@
-import { db } from "../../_db/dbInstance";
-import { PROVIDER_TYPES } from "./auth.models";
+import { db } from "../../../_db/dbInstance";
+import { PROVIDER_TYPES } from "../auth.models";
 
 export async function findUserByGoogleId(googleId: string) {
   return db

@@ -1,8 +1,8 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { findUserByEmail } from "./auth.models";
-import { sendVerificationEmail } from "../../utils/emailService";
-import { generateVerificationToken } from "../../utils/token";
+import { findUserByEmail } from "../auth.models";
+import { sendVerificationEmail } from "../../../utils/emailService";
+import { generateVerificationToken } from "../../../utils/token";
 import {
   findUserByVerificationToken,
   verifyUserEmail,

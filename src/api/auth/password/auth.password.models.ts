@@ -1,7 +1,7 @@
 import { Kysely } from "kysely";
-import { db } from "../../_db/dbInstance";
-import { PROVIDER_TYPES } from "./auth.models";
-import { DB } from "../../_db/dbTypes";
+import { db } from "../../../_db/dbInstance";
+import { DB } from "../../../_db/dbTypes";
+import { PROVIDER_TYPES } from "../auth.models";
 
 export async function storePasswordResetToken(
   userId: number,

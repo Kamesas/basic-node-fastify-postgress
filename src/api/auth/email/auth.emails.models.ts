@@ -1,4 +1,4 @@
-import { db } from "../../_db/dbInstance";
+import { db } from "../../../_db/dbInstance";
 
 export async function setEmailVerificationToken(
   userId: number,

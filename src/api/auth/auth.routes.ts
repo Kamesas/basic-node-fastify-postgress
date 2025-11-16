@@ -1,27 +1,27 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { loginRouteSchema, registerRouteSchema } from "./auth.schemas";
 import { argonHash, argonVerify } from "../../utils/argon";
-import {
-  findUserByUsernameOrEmail,
-  registerWithEmail,
-  findUserWithEmailProvider,
-} from "./auth.models";
-import { storeTokens } from "./auth.tokens.models";
+import { setAuthCookies } from "../../utils/authCookies";
 import { sendVerificationEmail } from "../../utils/emailService";
-import { generateVerificationToken } from "../../utils/token";
-import authEmailRoutes from "./auth.emails.routes";
-import authLogoutRoutes from "./auth.logout.routes";
-import authPasswordRoutes from "./auth.password.routes";
-import { setEmailVerificationToken } from "./auth.emails.models";
 import {
-  tJwtPayload,
   generateAccessToken,
   generateRefreshToken,
+  tJwtPayload,
 } from "../../utils/jwt";
-import authTokensRoutes from "./auth.tokens.routes";
-import googleAuthRoutes from "./auth.google.routes";
-import { setAuthCookies } from "../../utils/authCookies";
+import { generateVerificationToken } from "../../utils/token";
+import googleAuthRoutes from "./oauth/auth.google.routes";
+import authLogoutRoutes from "./auth.logout.routes";
+import {
+  findUserByUsernameOrEmail,
+  findUserWithEmailProvider,
+  registerWithEmail,
+} from "./auth.models";
+import { loginRouteSchema, registerRouteSchema } from "./auth.schemas";
+import { storeTokens } from "./tokens/auth.tokens.models";
+import authTokensRoutes from "./tokens/auth.tokens.routes";
+import { setEmailVerificationToken } from "./email/auth.emails.models";
+import authEmailRoutes from "./email/auth.emails.routes";
+import authPasswordRoutes from "./password/auth.password.routes";
 
 export default function authRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
@@ -115,7 +115,7 @@ export default function authRoutes(fastify: FastifyInstance) {
         createdAt: user.created_at.toISOString(), // TODO: Need to adjust dates
       },
       accessToken,
-      refreshToken, // can be used to mobile
+      refreshToken,
     });
   });
 }
