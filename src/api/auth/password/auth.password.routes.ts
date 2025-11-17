@@ -5,12 +5,15 @@ import { argonHash, argonVerify } from "../../../utils/argon";
 import { sendPasswordResetEmail } from "../../../utils/emailService";
 import { generateVerificationToken } from "../../../utils/token";
 import { findUserByEmail } from "../auth.models";
-import { forgotPasswordSchema, resetPasswordSchema } from "../auth.schemas";
 import {
   deletePasswordResetToken,
   storePasswordResetToken,
   updateUserPassword,
 } from "./auth.password.models";
+import {
+  forgotPasswordSchema,
+  resetPasswordSchema,
+} from "./auth.password.schemas";
 
 export default async function authPasswordRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
