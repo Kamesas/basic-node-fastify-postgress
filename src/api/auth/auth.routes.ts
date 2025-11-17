@@ -34,7 +34,9 @@ export default function authRoutes(fastify: FastifyInstance) {
 
   f.post(
     "/register",
-    { schema: registerRouteSchema },
+    {
+      schema: registerRouteSchema,
+    },
     async (request, reply) => {
       const { username, email, displayName, password } = request.body;
 
