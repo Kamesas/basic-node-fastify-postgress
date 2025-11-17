@@ -1,6 +1,5 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { logoutAllRouteSchema, logoutRouteSchema } from "../auth.schemas";
 import {
   deleteRefreshToken,
   deleteRefreshTokensByUserId,
@@ -9,6 +8,7 @@ import {
 import { argonVerify } from "../../../utils/argon";
 import { verifyToken } from "../../../utils/jwt";
 import { clearAuthCookies } from "../../../utils/authCookies";
+import { logoutRouteSchema, logoutAllRouteSchema } from "./auth.logout.schemas";
 
 export default async function authLogoutRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();

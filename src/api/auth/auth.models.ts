@@ -6,14 +6,6 @@ export const PROVIDER_TYPES = {
   GOOGLE: "google",
 } as const;
 
-export async function findUserByUsername(username: string) {
-  return db
-    .selectFrom("users")
-    .selectAll()
-    .where("username", "=", username)
-    .executeTakeFirst();
-}
-
 export async function findUserByEmail(email: string) {
   return db
     .selectFrom("users")

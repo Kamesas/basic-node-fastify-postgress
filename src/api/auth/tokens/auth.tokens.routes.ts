@@ -7,13 +7,13 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../../utils/jwt";
-import { refreshRouteSchema } from "./../auth.schemas";
 import {
   findRefreshTokensByUserId,
   deleteRefreshToken,
   storeTokens,
 } from "./auth.tokens.models";
 import { setAuthCookies } from "../../../utils/authCookies";
+import { refreshRouteSchema } from "./auth.tokens.schemas";
 
 export default function authTokensRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
