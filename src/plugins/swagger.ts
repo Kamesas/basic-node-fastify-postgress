@@ -23,7 +23,9 @@ const swaggerPlugin: FastifyPluginAsync = async (fastify) => {
       },
       servers: [
         {
-          url: isDevelopment ? "http://localhost:3000" : config.frontendUrl,
+          url: isDevelopment
+            ? `http://localhost:${config.port}`
+            : config.frontendUrl,
           description: isDevelopment
             ? "Development server"
             : "Production server",
