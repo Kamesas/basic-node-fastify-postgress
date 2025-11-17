@@ -1,20 +1,20 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { logoutAllRouteSchema, logoutRouteSchema } from "./auth.schemas";
+import { logoutAllRouteSchema, logoutRouteSchema } from "../auth.schemas";
 import {
   deleteRefreshToken,
   deleteRefreshTokensByUserId,
   findRefreshTokensByUserId,
-} from "./tokens/auth.tokens.models";
-import { argonVerify } from "../../utils/argon";
-import { verifyToken } from "../../utils/jwt";
-import { clearAuthCookies } from "../../utils/authCookies";
+} from "../tokens/auth.tokens.models";
+import { argonVerify } from "../../../utils/argon";
+import { verifyToken } from "../../../utils/jwt";
+import { clearAuthCookies } from "../../../utils/authCookies";
 
 export default async function authLogoutRoutes(fastify: FastifyInstance) {
   const f = fastify.withTypeProvider<ZodTypeProvider>();
 
   f.post("/logout", { schema: logoutRouteSchema }, async (request, reply) => {
-    let refreshToken = request.cookies.refreshToken; // Web browsers
+    let refreshToken = request.cookies.refreshToken;
 
     if (!refreshToken && request.body?.refreshToken) {
       refreshToken = request.body.refreshToken;

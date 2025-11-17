@@ -10,7 +10,7 @@ import {
 } from "../../utils/jwt";
 import { generateVerificationToken } from "../../utils/token";
 import googleAuthRoutes from "./oauth/auth.google.routes";
-import authLogoutRoutes from "./auth.logout.routes";
+import authLogoutRoutes from "./logout/auth.logout.routes";
 import {
   findUserByUsernameOrEmail,
   findUserWithEmailProvider,
