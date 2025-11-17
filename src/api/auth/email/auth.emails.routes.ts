@@ -31,6 +31,19 @@ export default function authRoutes(fastify: FastifyInstance) {
         });
       }
 
+      // Check if token has expired
+      const expiresAt = user.email_verification_expires_at
+        ? new Date(user.email_verification_expires_at)
+        : null;
+      const isExpired = !expiresAt || expiresAt < new Date();
+
+      if (isExpired) {
+        return reply.code(400).send({
+          error: "Bad Request",
+          message: "Verification token has expired. Please request a new one.",
+        });
+      }
+
       await verifyUserEmail(user.id);
 
       return reply.code(200).send({
