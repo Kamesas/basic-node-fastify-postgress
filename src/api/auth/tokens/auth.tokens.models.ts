@@ -1,6 +1,7 @@
 import { db } from "../../../_db/dbInstance";
 import { JsonValue } from "../../../_db/dbTypes";
 import { argonHash } from "../../../utils/argon";
+import { config } from "../../../config";
 
 type tStoreRefreshTokenInput = {
   userId: number;
@@ -62,7 +63,7 @@ export async function storeTokens(
   await storeRefreshToken({
     userId,
     tokenHash: await argonHash(refreshToken),
-    expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+    expiresAt: new Date(Date.now() + config.refreshTokenCookieMaxAge * 1000), // 7 days (matches JWT expiry)
     deviceInfo: userAgent ? { userAgent } : null,
   });
 }

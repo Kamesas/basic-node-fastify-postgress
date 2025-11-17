@@ -31,10 +31,10 @@ const swaggerPlugin: FastifyPluginAsync = async (fastify) => {
             : "Production server",
         },
       ],
-      tags: [
-        { name: "auth", description: "Authentication endpoints" },
-        { name: "users", description: "User management endpoints" },
-      ],
+      // tags: [ // to make this works need to add to a route shcema: tags: ["auth"]
+      //   { name: "auth", description: "Authentication endpoints" },
+      //   { name: "users", description: "User management endpoints" },
+      // ],
       components: {
         securitySchemes: {
           bearerAuth: {
