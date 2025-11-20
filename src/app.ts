@@ -7,6 +7,7 @@ import {
   validatorCompiler,
 } from "fastify-type-provider-zod";
 import usersRoutes from "./api/users/users.routes";
+import authRoutes from "./api/auth/auth.routes";
 
 export interface AppOptions
   extends FastifyServerOptions,
@@ -27,19 +28,20 @@ const app: FastifyPluginAsync<AppOptions> = async (
     },
   });
 
-  // Zod validation
-  fastify.setValidatorCompiler(validatorCompiler);
-  fastify.setSerializerCompiler(serializerCompiler);
-
-  // Routes
-  fastify.register(usersRoutes, { prefix: "/api" });
-
   // Plugins
   // eslint-disable-next-line no-void
   void fastify.register(AutoLoad, {
     dir: join(__dirname, "plugins"),
     options: opts,
   });
+
+  // Zod validation
+  fastify.setValidatorCompiler(validatorCompiler);
+  fastify.setSerializerCompiler(serializerCompiler);
+
+  // Routes
+  fastify.register(usersRoutes, { prefix: "/api" });
+  fastify.register(authRoutes, { prefix: "/api/auth" });
 };
 
 export default app;

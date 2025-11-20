@@ -12,16 +12,16 @@ export async function seedUsers(db: Kysely<DB>) {
   await db
     .insertInto("users")
     .values([
-      { username: "Alice Johnson", email: "alice@example.com" },
-      { username: "Bob Smith", email: "bob@example.com" },
-      { username: "Charlie Brown", email: "charlie@example.com" },
-      { username: "Diana Prince", email: "diana@example.com" },
-      { username: "Eve Davis", email: "eve@example.com" },
-      { username: "Frank Miller", email: "frank@example.com" },
-      { username: "Grace Lee", email: "grace@example.com" },
-      { username: "Henry Wilson", email: "henry@example.com" },
-      { username: "Ivy Chen", email: "ivy@example.com" },
-      { username: "Jack Roberts", email: "jack@example.com" },
+      { username: "alice_johnson", email: "alice@example.com" },
+      { username: "bob_smith", email: "bob@example.com" },
+      { username: "charlie_brown", email: "charlie@example.com" },
+      { username: "diana_prince", email: "diana@example.com" },
+      { username: "eve_davis", email: "eve@example.com" },
+      { username: "frank_miller", email: "frank@example.com" },
+      { username: "grace_lee", email: "grace@example.com" },
+      { username: "henry_wilson", email: "henry@example.com" },
+      { username: "ivy_chen", email: "ivy@example.com" },
+      { username: "jack_roberts", email: "jack@example.com" },
     ])
     .execute();
 

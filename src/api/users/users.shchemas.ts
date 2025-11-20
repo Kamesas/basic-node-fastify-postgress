@@ -12,7 +12,6 @@ export const CreateUserResponseSchema = z.object({
 
 export const GetUsersResponseSchema = z.array(z.string());
 
-// Route Schemas
 export const getUsersRouteSchema = {
   response: {
     200: GetUsersResponseSchema,

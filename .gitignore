@@ -66,3 +66,8 @@ dist
 
 
 .env
+
+AGENTS.md
+todo.md
+google_client_secre.json
+
